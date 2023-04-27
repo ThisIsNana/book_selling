@@ -4,11 +4,14 @@ public enum RtnCode {
 	// 存放常數及回覆constants = 常數，Rtn = return
 	SUCCESSFUL("200", "完成!"), 
 	CANNOT_EMTPY("400", "欄位不可空白"), // 前面名字可自己定義
+	ISBN_CANNOT_EMTPY("400", "ISBN為必填"), // 前面名字可自己定義
+	IDENTIFY_CANNOT_EMTPY("400", "身分攔為必填!1為消費者，0為廠商!"), // 前面名字可自己定義
 	DATA_ERROR("400", "輸入格式有誤"), 
+	INT_ERROR("400", "輸入數字或數量有誤!"), 
 	UNAUTHORIZED("401", "尚未輸入身分!"), 
-	ALREADY_AUTHORIZED("401", "帳號已驗證，請直接登入"),
 	NOT_FOUND("404", "查無資料"), 
-	ALREADY_PRESENT("409", "重複新增");
+	ALREADY_PRESENT("409", "重複新增"),
+	NO_CHANGE("409", "資料未修改");
 
 	private String code;
 	private String message;

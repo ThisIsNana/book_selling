@@ -6,11 +6,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "book_selling")
+@Table(name = "book")
 public class BookSelling {
 
 	@Id
-	@Column(name = "ISBN")
+	@Column(name = "isbn")
 	private String isbn;
 
 	@Column(name = "name")
@@ -33,6 +33,15 @@ public class BookSelling {
 
 	public BookSelling() {
 		super();
+	}
+
+	public BookSelling(String isbn, String name, String author, int price, String category, int inStock) {
+		super();
+		this.isbn = isbn;
+		this.name = name;
+		this.author = author;
+		this.price = price;
+		this.category = category;
 	}
 
 	public BookSelling(String isbn, String name, String author, int price, String category, int inStock,
