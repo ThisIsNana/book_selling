@@ -4,8 +4,8 @@ public enum RtnCode {
 	// 存放常數及回覆constants = 常數，Rtn = return
 	SUCCESSFUL("200", "完成!"), 
 	CANNOT_EMTPY("400", "欄位不可空白"), // 前面名字可自己定義
-	ISBN_CANNOT_EMTPY("400", "ISBN為必填"), // 前面名字可自己定義
-	IDENTIFY_CANNOT_EMTPY("400", "身分攔為必填!1為消費者，0為廠商!"), // 前面名字可自己定義
+	ISBN_CANNOT_EMTPY("400", "ISBN為必填"), 
+	IDENTIFY_CANNOT_EMTPY("400", "身分攔為必填!1為消費者，0為廠商!"), //
 	DATA_ERROR("400", "輸入格式有誤"), 
 	INT_ERROR("400", "輸入數字或數量有誤!"), 
 	UNAUTHORIZED("401", "尚未輸入身分!"), 

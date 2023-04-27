@@ -27,12 +27,12 @@ public class BookSellingController {
 	
 	@PostMapping(value = "search_containing")
 	public BookSellingResponse SearchBookContaining(@RequestBody BookSellingRequest request) {
-		return bookService.SearchBookContaining(request.getIsCustomer(),request.getSearchIsbn(),request.getSearchName(),request.getSearchAuthor());
+		return bookService.SearchBookContaining(request.getIsCustomer(),request.getStr());
 	}
 	
-//	@PostMapping(value = "update_book")
-//	public BookSellingResponse UpdateBook(@RequestBody BookSellingRequest request) {
-//		return bookService.UpdateBook(request.getNewInfo());
-//	}
+	@PostMapping(value = "update_book")
+	public BookSellingResponse UpdateBook(@RequestBody BookSellingRequest request) {
+		return bookService.UpdateBook(request.getSearchIsbn(),request.getUpdatePrice(),request.getUpdateCategory(),request.getUpdateInStock());
+	}
 
 }

@@ -13,6 +13,7 @@ import com.example.book_selling.entity.BookSelling;
 import com.example.book_selling.repository.BookSellingDAO;
 import com.example.book_selling.service.ifs.BookSellingService;
 import com.example.book_selling.vo.BookSellingResponse;
+import com.example.book_selling.vo.SearchForCustomer;
 
 
 @SpringBootTest(classes = BookSellingApplication.class)
@@ -40,10 +41,34 @@ class BookSellingApplicationTests {
 		Assert.isTrue(bookResponse.getMessage().equalsIgnoreCase(RtnCode.DATA_ERROR.getMessage()),"出現錯誤!");
 	}
 	
+//	@Test
+//	public void updateBookByIsbnTest() {
+//		int result = bookDAO.updateBookByIsbn(200, "[中文, 心靈, 醫療]", 91, "9786263580857");
+//		System.out.println(result);
+//	}
+	
 	@Test
-	public void updateBookByIsbnTest() {
-		int result = bookDAO.updateBookByIsbn(200, "[中文, 心靈, 醫療]", 91, "9786263580857");
-		System.out.println(result);
+	public void findAllByKeywordTest() {
+		List<BookSelling> resultList = bookDAO.findAllByKeyword("哈");
+		for(BookSelling result : resultList) {
+			System.out.println(result);
+		}
+	}
+	
+	@Test
+	public void findAllByKeywordForCustomerTest() {
+		List<Object[]> resultList = bookDAO.SearchAllByKeywordForCustomer("哈");
+		for(Object[] result : resultList) {
+			System.out.println(result);
+		}
+	}
+	
+	@Test
+	public void SearchAllByKeywordForSupplierTest() {
+		List<Object[]> resultList = bookDAO.SearchAllByKeywordForSupplier("哈");
+		for(Object[] result : resultList) {
+			System.out.println(result);
+		}
 	}
 	
 //	@Test

@@ -2,7 +2,10 @@ package com.example.book_selling.service.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import com.example.book_selling.entity.BookSelling;
 import com.example.book_selling.repository.BookSellingDAO;
 import com.example.book_selling.service.ifs.BookSellingService;
 import com.example.book_selling.vo.BookSellingResponse;
+import com.example.book_selling.vo.SearchForCustomer;
 
 @Service
 public class BookSellingServiceImpl implements BookSellingService {
@@ -70,7 +74,7 @@ public class BookSellingServiceImpl implements BookSellingService {
 		return new BookSellingResponse(saveList, RtnCode.SUCCESSFUL.getMessage());
 	}
 
-	// 搜尋分類!
+	// 功能二：搜尋分類!
 	@Override
 	public BookSellingResponse SearchBookByCategory(String str) {
 		// 防呆
@@ -83,41 +87,37 @@ public class BookSellingServiceImpl implements BookSellingService {
 		if (resultList.isEmpty()) {
 			return new BookSellingResponse(RtnCode.NOT_FOUND.getMessage());
 		}
+		 List<SearchForCustomer> searchForC = new ArrayList<>();
+		 for(BookSelling result : resultList) {
+			 SearchForCustomer sfc = new SearchForCustomer(result.getIsbn(),result.getName(),result.getAuthor(),result.getPrice());
+			 searchForC.add(sfc);
+		 }
+		 
 		// 成功就顯示結果
-		return new BookSellingResponse(resultList, RtnCode.SUCCESSFUL.getMessage());
+		return new BookSellingResponse(searchForC);
 	}
 
+	//功能三：搜尋字串
 	@Override
-	public BookSellingResponse SearchBookContaining(Boolean isCustomer, String isbn, String name, String author) {
+	public BookSellingResponse SearchBookContaining(Boolean isCustomer, String str) {
 		// 防呆(身分未指定 或 搜尋全空白或null)
 		if (isCustomer == null) {
 			return new BookSellingResponse(RtnCode.IDENTIFY_CANNOT_EMTPY.getMessage());
 		}
-		if (!StringUtils.hasText(name) && !StringUtils.hasText(author) && !StringUtils.hasText(isbn)) {
+		if (!StringUtils.hasText(str)) {
 			return new BookSellingResponse(RtnCode.CANNOT_EMTPY.getMessage());
 		}
-		// 使用JPA自定義去搜尋結果
-		List<BookSelling> bookResult = bookDAO.findAllByIsbnContainingOrNameContainingOrAuthorContaining(isbn, name,
-				author);
-		if (bookResult.isEmpty()) {
+		// 使用JPQL去搜尋結果
+		List<Object[]> bookResult = new ArrayList<>();
+		if(isCustomer == true) {
+			 bookResult = bookDAO.SearchAllByKeywordForCustomer(str);
+		}else {
+			 bookResult = bookDAO.SearchAllByKeywordForSupplier(str);
+		}
+		if(CollectionUtils.isEmpty(bookResult)) {
 			return new BookSellingResponse(RtnCode.NOT_FOUND.getMessage());
 		}
-		// 有抓到資料的話 -> 區分是否為消費者
-		List<BookSelling> newBookResult = new ArrayList<>();
-		if (isCustomer = true) { // 消費者
-			for (BookSelling result : bookResult) {
-				result.setCategory(null);
-				result.setSoldQuantity(0);
-				newBookResult.add(result);
-			}
-			return new BookSellingResponse(newBookResult, RtnCode.SUCCESSFUL.getMessage());
-		} else { // 廠商
-			for (BookSelling result : bookResult) {
-				result.setCategory(null);
-				newBookResult.add(result);
-			}
-			return new BookSellingResponse(newBookResult, RtnCode.SUCCESSFUL.getMessage());
-		}
+		return new BookSellingResponse(RtnCode.SUCCESSFUL.getMessage(),bookResult);
 	}
 
 	//功能四: 更新庫存、價格或分類
@@ -153,7 +153,7 @@ public class BookSellingServiceImpl implements BookSellingService {
 		String bookCate = category.substring(1, category.length() - 1);
 		List<String> opCateList = Arrays.asList(opCate.split(", "));
 		List<String> bookCateList = Arrays.asList(bookCate.split(", "));
-		// 步驟2/3--先比較List長度，只要不同就直接set
+		// 步驟2/3--先比較List長度，只要不同就直接上傳
 		if (opCateList.size() != bookCateList.size()) {
 			updateBook.setCategory(category);
 			bookDAO.save(updateBook);
@@ -167,12 +167,48 @@ public class BookSellingServiceImpl implements BookSellingService {
 				continue;
 			}
 		}
-		// 假如新的分類完全等於原始的分類、價格也同、庫存也沒變 => 沒變更訊息
+		// 假如新的分類完全等於原始的分類、價格一樣、庫存一樣 => 錯誤訊息"無項目變更"
 		if (count == opCateList.size() && op.get().getInStock() == inStock && op.get().getPrice() == price) {
 			return new BookSellingResponse(RtnCode.NO_CHANGE.getMessage());
 		}
+		updateBook.setCategory(category);
 		bookDAO.save(updateBook);
 		return new BookSellingResponse(updateBook,RtnCode.SUCCESSFUL.getMessage());
+	}
+
+	//功能五：銷售書籍/購買書籍+計算
+	@Override
+	public BookSellingResponse OrderBook(Map<String, Integer> orderMap) {
+		//防呆
+		if(CollectionUtils.isEmpty(orderMap)) {
+			return new BookSellingResponse(RtnCode.CANNOT_EMTPY.getMessage());
+		}
+		//取map的isbn資料
+		List<String> isbnList = new ArrayList<>();
+		for(Entry<String, Integer> order : orderMap.entrySet()) {
+			if (order.getValue() < 0 || order.getValue() == null || order.getKey() == null) {
+				return new BookSellingResponse(RtnCode.INT_ERROR.getMessage());
+			}
+			isbnList.add(order.getKey());
+		}
+		List<Object[]> resultBooks = bookDAO.SearchByOrder(isbnList);
+		if(resultBooks.isEmpty()) {
+			return new BookSellingResponse(RtnCode.NOT_FOUND.getMessage());
+		}
+		//計算價格
+//		Map<List<Object[]>,Integer> showList = new HashMap<>();
+//		int sum = 0;
+//		for(int i = 0; i < resultBooks.size(); i++) {
+//			for(Object[] result : resultBooks) {
+//				for(Entry<String, Integer> order : orderMap.entrySet()) {
+//					if(Object[])
+//				}
+//			}
+//		}
+		
+		
+		
+		return new BookSellingResponse(RtnCode.SUCCESSFUL.getMessage());
 	}
 
 }

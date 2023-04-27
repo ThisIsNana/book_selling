@@ -12,13 +12,13 @@ public interface BookSellingService {
 
 	public BookSellingResponse SearchBookByCategory(String str);
 	
-	public BookSellingResponse SearchBookContaining(Boolean isCustomer, String isbn, String name, String author);
+//	public BookSellingResponse SearchBookContaining(Boolean isCustomer, String isbn, String name, String author);
+	public BookSellingResponse SearchBookContaining(Boolean isCustomer, String str);
 
 //	public BookSellingResponse UpdateBook(BookSelling book);
 
 	public BookSellingResponse UpdateBook(String isbn, int price, String category, int inStock);
 	
-	
-//	public BookSellingResponse OrderBook(Map<String,Integer> map);
+	public BookSellingResponse OrderBook(Map<String,Integer> map);
 	
 }

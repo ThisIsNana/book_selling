@@ -18,7 +18,7 @@ public class BookSellingRequest {
 		this.bookList = bookList;
 	}
 
-	@JsonProperty(value = "search_category_keyword")
+	@JsonProperty(value = "search_keyword")
 	private String str;
 
 	public String getStr() {
@@ -29,9 +29,11 @@ public class BookSellingRequest {
 		this.str = str;
 	}
 
+	
+	//搜尋功能(消費者/廠商)
 	@JsonProperty(value = "is_customer")
 	private Boolean isCustomer;
-
+	
 	@JsonProperty(value = "search_keyword_isbn")
 	private String searchIsbn;
 	
@@ -73,16 +75,39 @@ public class BookSellingRequest {
 		this.searchIsbn = searchIsbn;
 	}
 	
-	@JsonProperty(value = "update")
-	private BookSelling newInfo;
+	//更新書籍
+	//+searchIsbn
+	@JsonProperty(value = "update_price")
+	private int updatePrice;
+	
+	@JsonProperty(value = "update_category")
+	private String updateCategory;
+	
+	@JsonProperty(value = "update_in_stock")
+	private int updateInStock;
 
-	public BookSelling getNewInfo() {
-		return newInfo;
+	public int getUpdatePrice() {
+		return updatePrice;
 	}
 
-	public void setNewInfo(BookSelling newInfo) {
-		this.newInfo = newInfo;
+	public void setUpdatePrice(int updatePrice) {
+		this.updatePrice = updatePrice;
 	}
 
+	public String getUpdateCategory() {
+		return updateCategory;
+	}
+
+	public void setUpdateCategory(String updateCategory) {
+		this.updateCategory = updateCategory;
+	}
+
+	public int getUpdateInStock() {
+		return updateInStock;
+	}
+
+	public void setUpdateInStock(int updateInStock) {
+		this.updateInStock = updateInStock;
+	}
 
 }
