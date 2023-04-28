@@ -1,5 +1,8 @@
 package com.example.book_selling.vo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class SearchResultConvert {
 
 	private String isbn;
@@ -9,20 +12,9 @@ public class SearchResultConvert {
 	private int price;
 	private int inStock;
 	private int soldQuantity;
-	private int quantity;
 
 	public SearchResultConvert() {
 		super();
-	}
-
-	// Order (六) i書作價數 (重複格式所以把作者往後移)
-	public SearchResultConvert(String isbn, String name, int price, String author, int quantity) {
-		super();
-		this.isbn = isbn;
-		this.name = name;
-		this.price = price;
-		this.author = author;
-		this.quantity = quantity;
 	}
 
 	// for search category(二) I書作價庫
@@ -121,14 +113,6 @@ public class SearchResultConvert {
 
 	public void setSoldQuantity(int soldQuantity) {
 		this.soldQuantity = soldQuantity;
-	}
-
-	public int getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
 	}
 
 }

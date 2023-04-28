@@ -20,6 +20,7 @@ import com.example.book_selling.entity.BookSelling;
 import com.example.book_selling.repository.BookSellingDAO;
 import com.example.book_selling.service.ifs.BookSellingService;
 import com.example.book_selling.vo.BookSellingResponse;
+import com.example.book_selling.vo.OrderResultConvert;
 import com.example.book_selling.vo.SearchResultConvert;
 
 @Service
@@ -229,7 +230,7 @@ public class BookSellingServiceImpl implements BookSellingService {
 		List<BookSelling> resultList = bookDAO.findAllById(isbnList);
 		List<BookSelling> saveList = new ArrayList<>();
 		// 用來儲存只顯示某些項目的搜尋結果+數量
-		List<SearchResultConvert> resultConver = new ArrayList<>();
+		List<OrderResultConvert> resultConver = new ArrayList<>();
 		int sum = 0;
 		for (BookSelling result : resultList) {
 			for (Entry<String, Integer> order : orderMap.entrySet()) {
@@ -247,9 +248,9 @@ public class BookSellingServiceImpl implements BookSellingService {
 					result.setSoldQuantity(result.getSoldQuantity() + 1);
 					saveList.add(result);
 					// 轉換格式
-					SearchResultConvert sfc = new SearchResultConvert(result.getIsbn(), result.getName(),
-							result.getPrice(), result.getAuthor(), order.getValue());
-					resultConver.add(sfc);
+					OrderResultConvert orc = new OrderResultConvert(result.getIsbn(), result.getName(),
+							result.getAuthor(), result.getPrice(), order.getValue());
+					resultConver.add(orc);
 				}
 			}
 		}
@@ -260,14 +261,14 @@ public class BookSellingServiceImpl implements BookSellingService {
 	@Override
 	public BookSellingResponse SaleRank() {
 		List<BookSelling> resultList = bookDAO.findTop5ByOrderBySoldQuantityDesc();
-		//轉換銷售顯示
+		// 轉換銷售顯示
 		List<SearchResultConvert> resultConver = new ArrayList<>();
-		for(BookSelling result:resultList) {
-			SearchResultConvert sfc = new SearchResultConvert(result.getIsbn(), result.getName(),
-					result.getAuthor(), result.getPrice());
+		for (BookSelling result : resultList) {
+			SearchResultConvert sfc = new SearchResultConvert(result.getIsbn(), result.getName(), result.getAuthor(),
+					result.getPrice());
 			resultConver.add(sfc);
 		}
-		return new BookSellingResponse(RtnCode.SUCCESSFUL.getMessage(),resultConver);
+		return new BookSellingResponse(RtnCode.SUCCESSFUL.getMessage(), resultConver);
 	}
 
 }
