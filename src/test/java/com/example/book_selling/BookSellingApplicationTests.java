@@ -1,7 +1,9 @@
 package com.example.book_selling;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +15,6 @@ import com.example.book_selling.entity.BookSelling;
 import com.example.book_selling.repository.BookSellingDAO;
 import com.example.book_selling.service.ifs.BookSellingService;
 import com.example.book_selling.vo.BookSellingResponse;
-import com.example.book_selling.vo.SearchForCustomer;
 
 
 @SpringBootTest(classes = BookSellingApplication.class)
@@ -47,30 +48,44 @@ class BookSellingApplicationTests {
 //		System.out.println(result);
 //	}
 	
-	@Test
-	public void findAllByKeywordTest() {
-		List<BookSelling> resultList = bookDAO.findAllByKeyword("哈");
-		for(BookSelling result : resultList) {
-			System.out.println(result);
-		}
-	}
+//	@Test
+//	public void findAllByKeywordTest() {
+//		List<BookSelling> resultList = bookDAO.findAllByKeyword("哈");
+//		for(BookSelling result : resultList) {
+//			System.out.println(result);
+//		}
+//	}
+	
+//	@Test
+//	public void findAllByKeywordForCustomerTest() {
+//		List<Object[]> resultList = bookDAO.SearchAllByKeywordForCustomer("哈");
+//		for(Object[] result : resultList) {
+//			System.out.println(result);
+//		}
+//	}
+	
+//	@Test
+//	public void SearchAllByKeywordForSupplierTest() {
+//		List<Object[]> resultList = bookDAO.SearchAllByKeywordForSupplier("哈");
+//		for(Object[] result : resultList) {
+//			System.out.println(result);
+//		}
+//	}
 	
 	@Test
-	public void findAllByKeywordForCustomerTest() {
-		List<Object[]> resultList = bookDAO.SearchAllByKeywordForCustomer("哈");
-		for(Object[] result : resultList) {
-			System.out.println(result);
-		}
+	public void OrderBookTest() {
+		Map<String, Integer> orderMap = new HashMap<>();
+		orderMap.put("9786263580855", 1);
+		orderMap.put("9786263580856", 1);
+		orderMap.put("9786263580857", 3);
+		BookSellingResponse orderResponse = bookService.OrderBook(orderMap);
+		System.out.println(orderResponse.getMessage());
 	}
 	
-	@Test
-	public void SearchAllByKeywordForSupplierTest() {
-		List<Object[]> resultList = bookDAO.SearchAllByKeywordForSupplier("哈");
-		for(Object[] result : resultList) {
-			System.out.println(result);
-		}
-	}
 	
+
+	
+	//===========之前的TEST範例================
 //	@Test
 //	public void depositTest() {
 //		//先創建測試資料

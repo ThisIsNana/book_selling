@@ -1,6 +1,7 @@
 package com.example.book_selling.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,14 +26,28 @@ public class BookSellingController {
 		return bookService.SearchBookByCategory(request.getStr());
 	}
 	
-	@PostMapping(value = "search_containing")
+//	@PostMapping(value = "search_containing") //JPQL
+//	public BookSellingResponse SearchBookContaining(@RequestBody BookSellingRequest request) {
+//		return bookService.SearchBookContaining(request.getIsCustomer(),request.getStr());
+//	}
+	@PostMapping(value = "search_containing") //JPA
 	public BookSellingResponse SearchBookContaining(@RequestBody BookSellingRequest request) {
-		return bookService.SearchBookContaining(request.getIsCustomer(),request.getStr());
+		return bookService.SearchBookContaining(request.getIsCustomer(),request.getSearchIsbn(),request.getSearchName(),request.getSearchAuthor());
 	}
 	
 	@PostMapping(value = "update_book")
 	public BookSellingResponse UpdateBook(@RequestBody BookSellingRequest request) {
 		return bookService.UpdateBook(request.getSearchIsbn(),request.getUpdatePrice(),request.getUpdateCategory(),request.getUpdateInStock());
+	}
+	
+	@PostMapping(value = "order")
+	public BookSellingResponse OrderBook(@RequestBody BookSellingRequest request) {
+		return bookService.OrderBook(request.getOrderMap());
+	}
+	
+	@GetMapping(value = "show_rank")
+	public BookSellingResponse SaleRank() {
+		return bookService.SaleRank();
 	}
 
 }

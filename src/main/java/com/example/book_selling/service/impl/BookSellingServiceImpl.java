@@ -3,10 +3,12 @@ package com.example.book_selling.service.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,7 @@ import com.example.book_selling.entity.BookSelling;
 import com.example.book_selling.repository.BookSellingDAO;
 import com.example.book_selling.service.ifs.BookSellingService;
 import com.example.book_selling.vo.BookSellingResponse;
-import com.example.book_selling.vo.SearchForCustomer;
+import com.example.book_selling.vo.SearchResultConvert;
 
 @Service
 public class BookSellingServiceImpl implements BookSellingService {
@@ -87,40 +89,69 @@ public class BookSellingServiceImpl implements BookSellingService {
 		if (resultList.isEmpty()) {
 			return new BookSellingResponse(RtnCode.NOT_FOUND.getMessage());
 		}
-		 List<SearchForCustomer> searchForC = new ArrayList<>();
-		 for(BookSelling result : resultList) {
-			 SearchForCustomer sfc = new SearchForCustomer(result.getIsbn(),result.getName(),result.getAuthor(),result.getPrice());
-			 searchForC.add(sfc);
-		 }
-		 
+		List<SearchResultConvert> searchConvert = new ArrayList<>();
+		for (BookSelling result : resultList) {
+			SearchResultConvert sfc = new SearchResultConvert(result.getIsbn(), result.getName(), result.getAuthor(),
+					result.getPrice(), result.getInStock());
+			searchConvert.add(sfc);
+		}
+
 		// 成功就顯示結果
-		return new BookSellingResponse(searchForC);
+		return new BookSellingResponse(searchConvert);
 	}
 
-	//功能三：搜尋字串
+	// 功能三：搜尋字串(JPQL)
+//	@Override
+//	public BookSellingResponse SearchBookContaining(Boolean isCustomer, String str) {
+//		// 防呆(身分未指定 或 搜尋全空白或null)
+//		if (isCustomer == null) {
+//			return new BookSellingResponse(RtnCode.IDENTIFY_CANNOT_EMTPY.getMessage());
+//		}
+//		if (!StringUtils.hasText(str)) {
+//			return new BookSellingResponse(RtnCode.CANNOT_EMTPY.getMessage());
+//		}	
+//		// 使用JPQL去搜尋結果
+//		List<Object[]> bookResult = new ArrayList<>();
+//		if(isCustomer == true) {
+//			 bookResult = bookDAO.SearchAllByKeywordForCustomer(str);
+//		}else {
+//			 bookResult = bookDAO.SearchAllByKeywordForSupplier(str);
+//		}
+//		if(CollectionUtils.isEmpty(bookResult)) {
+//			return new BookSellingResponse(RtnCode.NOT_FOUND.getMessage());
+//		}
+//		return new BookSellingResponse(RtnCode.SUCCESSFUL.getMessage(),bookResult);
+//	}
+	// 功能三：搜尋字串(JPA)
 	@Override
-	public BookSellingResponse SearchBookContaining(Boolean isCustomer, String str) {
+	public BookSellingResponse SearchBookContaining(Boolean isCustomer, String isbn, String name, String author) {
 		// 防呆(身分未指定 或 搜尋全空白或null)
 		if (isCustomer == null) {
 			return new BookSellingResponse(RtnCode.IDENTIFY_CANNOT_EMTPY.getMessage());
 		}
-		if (!StringUtils.hasText(str)) {
+		if (!StringUtils.hasText(isbn) && !StringUtils.hasText(name) && !StringUtils.hasText(author)) {
 			return new BookSellingResponse(RtnCode.CANNOT_EMTPY.getMessage());
 		}
-		// 使用JPQL去搜尋結果
-		List<Object[]> bookResult = new ArrayList<>();
-		if(isCustomer == true) {
-			 bookResult = bookDAO.SearchAllByKeywordForCustomer(str);
-		}else {
-			 bookResult = bookDAO.SearchAllByKeywordForSupplier(str);
+		// 嘗試使用個別方法去搜尋再加SET ==> 邏輯過長且重複執行DAO ==> 放棄
+		// 使用JPA去搜尋
+		List<BookSelling> resultList = bookDAO.findAllByIsbnContainingOrNameContainingOrAuthorContaining(isbn, name,
+				author);
+		List<SearchResultConvert> searchConvert = new ArrayList<>();
+		for (BookSelling result : resultList) {
+			if (isCustomer == true) { // 消費者顯示 I書作價
+				SearchResultConvert sfc = new SearchResultConvert(result.getIsbn(), result.getName(),
+						result.getAuthor(), result.getPrice());
+				searchConvert.add(sfc);
+			} else { // 廠商顯示 i書作價銷庫
+				SearchResultConvert sfc = new SearchResultConvert(result.getIsbn(), result.getName(),
+						result.getAuthor(), result.getPrice(), result.getInStock(), result.getSoldQuantity());
+				searchConvert.add(sfc);
+			}
 		}
-		if(CollectionUtils.isEmpty(bookResult)) {
-			return new BookSellingResponse(RtnCode.NOT_FOUND.getMessage());
-		}
-		return new BookSellingResponse(RtnCode.SUCCESSFUL.getMessage(),bookResult);
+		return new BookSellingResponse(RtnCode.SUCCESSFUL.getMessage(), searchConvert);
 	}
 
-	//功能四: 更新庫存、價格或分類
+	// 功能四: 更新庫存、價格或分類
 	@Override
 	public BookSellingResponse UpdateBook(String isbn, int price, String category, int inStock) {
 //	public BookSellingResponse UpdateBook(BookSelling book) {
@@ -138,13 +169,13 @@ public class BookSellingServiceImpl implements BookSellingService {
 		int opInStock = updateBook.getInStock();
 		if (opInStock > inStock) {
 			return new BookSellingResponse(RtnCode.INT_ERROR.getMessage());
-		}else if (opInStock != inStock || inStock != 0) {
+		} else if (opInStock != inStock || inStock != 0) {
 			updateBook.setInStock(inStock);
 		}
 		// 檢查價格格式 --> 有變更就set
 		if (price <= 0) {
 			return new BookSellingResponse(RtnCode.INT_ERROR.getMessage());
-		}else {
+		} else {
 			updateBook.setPrice(price);
 		}
 		// 檢查分類是否沒修改
@@ -173,42 +204,70 @@ public class BookSellingServiceImpl implements BookSellingService {
 		}
 		updateBook.setCategory(category);
 		bookDAO.save(updateBook);
-		return new BookSellingResponse(updateBook,RtnCode.SUCCESSFUL.getMessage());
+		// 轉換顯示結果
+		SearchResultConvert sfc = new SearchResultConvert(updateBook.getIsbn(), updateBook.getName(),
+				updateBook.getAuthor(), updateBook.getPrice(), updateBook.getInStock());
+		return new BookSellingResponse(sfc, RtnCode.SUCCESSFUL.getMessage());
 	}
 
-	//功能五：銷售書籍/購買書籍+計算
+	// 功能五：銷售書籍/購買書籍+計算
 	@Override
 	public BookSellingResponse OrderBook(Map<String, Integer> orderMap) {
-		//防呆
-		if(CollectionUtils.isEmpty(orderMap)) {
+		// 防呆
+		if (CollectionUtils.isEmpty(orderMap)) {
 			return new BookSellingResponse(RtnCode.CANNOT_EMTPY.getMessage());
 		}
-		//取map的isbn資料
+		// 取map的isbn資料
 		List<String> isbnList = new ArrayList<>();
-		for(Entry<String, Integer> order : orderMap.entrySet()) {
+		for (Entry<String, Integer> order : orderMap.entrySet()) {
 			if (order.getValue() < 0 || order.getValue() == null || order.getKey() == null) {
 				return new BookSellingResponse(RtnCode.INT_ERROR.getMessage());
 			}
 			isbnList.add(order.getKey());
 		}
-		List<Object[]> resultBooks = bookDAO.SearchByOrder(isbnList);
-		if(resultBooks.isEmpty()) {
-			return new BookSellingResponse(RtnCode.NOT_FOUND.getMessage());
+		// 用JPA將結果取出
+		List<BookSelling> resultList = bookDAO.findAllById(isbnList);
+		List<BookSelling> saveList = new ArrayList<>();
+		// 用來儲存只顯示某些項目的搜尋結果+數量
+		List<SearchResultConvert> resultConver = new ArrayList<>();
+		int sum = 0;
+		for (BookSelling result : resultList) {
+			for (Entry<String, Integer> order : orderMap.entrySet()) {
+				if (result.getInStock() < order.getValue()) {
+					// 庫存不足
+					return new BookSellingResponse(RtnCode.NOT_IN_STOCK.getMessage());
+				}
+				if (result.getIsbn().equals(order.getKey())) {
+					// 計算價格
+					int price = result.getPrice();
+					int quantity = order.getValue();
+					sum += price * quantity;
+					// 修改庫存及銷售量
+					result.setInStock(result.getInStock() - 1);
+					result.setSoldQuantity(result.getSoldQuantity() + 1);
+					saveList.add(result);
+					// 轉換格式
+					SearchResultConvert sfc = new SearchResultConvert(result.getIsbn(), result.getName(),
+							result.getPrice(), result.getAuthor(), order.getValue());
+					resultConver.add(sfc);
+				}
+			}
 		}
-		//計算價格
-//		Map<List<Object[]>,Integer> showList = new HashMap<>();
-//		int sum = 0;
-//		for(int i = 0; i < resultBooks.size(); i++) {
-//			for(Object[] result : resultBooks) {
-//				for(Entry<String, Integer> order : orderMap.entrySet()) {
-//					if(Object[])
-//				}
-//			}
-//		}
-		
-		
-		
-		return new BookSellingResponse(RtnCode.SUCCESSFUL.getMessage());
+		bookDAO.saveAll(saveList);
+		return new BookSellingResponse(resultConver, sum, RtnCode.SUCCESSFUL.getMessage());
+	}
+
+	@Override
+	public BookSellingResponse SaleRank() {
+		List<BookSelling> resultList = bookDAO.findTop5ByOrderBySoldQuantityDesc();
+		//轉換銷售顯示
+		List<SearchResultConvert> resultConver = new ArrayList<>();
+		for(BookSelling result:resultList) {
+			SearchResultConvert sfc = new SearchResultConvert(result.getIsbn(), result.getName(),
+					result.getAuthor(), result.getPrice());
+			resultConver.add(sfc);
+		}
+		return new BookSellingResponse(RtnCode.SUCCESSFUL.getMessage(),resultConver);
 	}
 
 }

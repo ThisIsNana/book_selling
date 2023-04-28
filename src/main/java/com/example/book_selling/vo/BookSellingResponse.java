@@ -1,21 +1,20 @@
 package com.example.book_selling.vo;
 
 import java.util.List;
-import java.util.Map;
 
 import com.example.book_selling.entity.BookSelling;
 
 public class BookSellingResponse {
 
-	
-	
 	private BookSelling bookselling;
-	private List<SearchForCustomer> searchForC;
+	private SearchResultConvert searchConvert;
+	private List<SearchResultConvert> searchConverList;
 	private List<BookSelling> bookList;
-	private List<Object[]> obList; //用來存放JPQL的結果
 	private String message;
-	private int sum; //販售--計算總價
-	private Map<List<Object[]>,Integer> orderList; //販售--訂單內容與數量(顯示部分資訊)
+	private int sum; // 販售--計算總價
+	private List<SearchResultConvert> resultConver; // 販售--結果+數量
+//	private List<Object[]> obList; //用來存放JPQL的結果
+//	private Map<List<Object[]>,Integer> orderList; //販售--訂單內容與數量(顯示部分資訊)
 
 	public BookSellingResponse() {
 		super();
@@ -27,22 +26,27 @@ public class BookSellingResponse {
 	}
 
 
-	public BookSellingResponse(List<SearchForCustomer> searchForC) {
-		super();
-		this.searchForC = searchForC;
-	}
-
-	public BookSellingResponse( Map<List<Object[]>, Integer> orderList, int sum, String message) {
+	public BookSellingResponse(List<SearchResultConvert> resultConver, int sum, String message) {
 		super();
 		this.message = message;
 		this.sum = sum;
-		this.orderList = orderList;
+		this.resultConver = resultConver;
 	}
 
-	public BookSellingResponse(String message, List<Object[]> obList) {
+	public BookSellingResponse(SearchResultConvert searchConvert, String message) {
 		super();
-		this.obList = obList;
+		this.searchConvert = searchConvert;
 		this.message = message;
+	}
+
+	public BookSellingResponse(List<SearchResultConvert> searchConverList) {
+		super();
+		this.searchConverList = searchConverList;
+	}
+
+	public BookSellingResponse(String message, List<SearchResultConvert> searchConverList) {
+		super();
+		this.searchConverList = searchConverList;
 	}
 
 	public BookSellingResponse(BookSelling bookselling, String message) {
@@ -81,14 +85,6 @@ public class BookSellingResponse {
 		this.bookList = bookList;
 	}
 
-	public List<Object[]> getObList() {
-		return obList;
-	}
-
-	public void setObList(List<Object[]> obList) {
-		this.obList = obList;
-	}
-
 	public int getSum() {
 		return sum;
 	}
@@ -97,22 +93,37 @@ public class BookSellingResponse {
 		this.sum = sum;
 	}
 
-	public Map<List<Object[]>, Integer> getOrderList() {
-		return orderList;
+	public SearchResultConvert getSearchResultConvert() {
+		return searchConvert;
 	}
 
-	public void setOrderList(Map<List<Object[]>, Integer> orderList) {
-		this.orderList = orderList;
+	public void setSearchResultConvert(SearchResultConvert searchResultConvert) {
+		this.searchConvert = searchResultConvert;
 	}
 
-	public List<SearchForCustomer> getSearchForC() {
-		return searchForC;
+	public SearchResultConvert getSearchConvert() {
+		return searchConvert;
 	}
 
-	public void setSearchForC(List<SearchForCustomer> searchForC) {
-		this.searchForC = searchForC;
+	public void setSearchConvert(SearchResultConvert searchConvert) {
+		this.searchConvert = searchConvert;
 	}
 
-	
+	public List<SearchResultConvert> getSearchConverList() {
+		return searchConverList;
+	}
+
+	public void setSearchConverList(List<SearchResultConvert> searchConverList) {
+		this.searchConverList = searchConverList;
+	}
+
+	public List<SearchResultConvert> getResultConver() {
+		return resultConver;
+	}
+
+	public void setResultConver(List<SearchResultConvert> resultConver) {
+		this.resultConver = resultConver;
+	}
+
 
 }

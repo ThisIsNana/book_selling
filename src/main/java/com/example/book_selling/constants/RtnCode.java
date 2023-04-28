@@ -8,6 +8,7 @@ public enum RtnCode {
 	IDENTIFY_CANNOT_EMTPY("400", "身分攔為必填!1為消費者，0為廠商!"), //
 	DATA_ERROR("400", "輸入格式有誤"), 
 	INT_ERROR("400", "輸入數字或數量有誤!"), 
+	NOT_IN_STOCK("400", "庫存不足，請確認訂單!"), 
 	UNAUTHORIZED("401", "尚未輸入身分!"), 
 	NOT_FOUND("404", "查無資料"), 
 	ALREADY_PRESENT("409", "重複新增"),
