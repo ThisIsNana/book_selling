@@ -5,8 +5,11 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 @Entity
 @Table(name = "book")
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class BookSelling {
 
 	@Id
@@ -35,6 +38,25 @@ public class BookSelling {
 		super();
 	}
 
+	//消費者畫面
+	public BookSelling(String isbn, String name, String author, int price) {
+		super();
+		this.isbn = isbn;
+		this.name = name;
+		this.author = author;
+		this.price = price;
+	}
+
+	// 更新功能用、只顯示 I書作價庫
+	public BookSelling(String isbn, String name, String author, int price, int inStock) {
+		super();
+		this.isbn = isbn;
+		this.name = name;
+		this.author = author;
+		this.price = price;
+		this.inStock = inStock;
+	}
+
 	public BookSelling(String isbn, String name, String author, int price, String category, int inStock) {
 		super();
 		this.isbn = isbn;
@@ -42,6 +64,17 @@ public class BookSelling {
 		this.author = author;
 		this.price = price;
 		this.category = category;
+	}
+
+	//廠商檢視用
+	public BookSelling(String isbn, String name, String author, int price, int inStock, int soldQuantity) {
+		super();
+		this.isbn = isbn;
+		this.name = name;
+		this.author = author;
+		this.price = price;
+		this.inStock = inStock;
+		this.soldQuantity = soldQuantity;
 	}
 
 	public BookSelling(String isbn, String name, String author, int price, String category, int inStock,

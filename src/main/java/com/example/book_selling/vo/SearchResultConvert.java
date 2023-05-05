@@ -17,17 +17,7 @@ public class SearchResultConvert {
 		super();
 	}
 
-	// for search category(二) I書作價庫
-	public SearchResultConvert(String isbn, String name, String author, int price, int inStock) {
-		super();
-		this.isbn = isbn;
-		this.name = name;
-		this.author = author;
-		this.price = price;
-		this.inStock = inStock;
-	}
 
-	// for customers (三之一) I書作價
 	// for Selling (六)
 	public SearchResultConvert(String isbn, String name, String author, int price) {
 		super();
@@ -35,17 +25,6 @@ public class SearchResultConvert {
 		this.name = name;
 		this.author = author;
 		this.price = price;
-	}
-
-	// for Supplier(三之二) I書作價庫銷
-	public SearchResultConvert(String isbn, String name, String author, int price, int inStock, int soldQuantity) {
-		super();
-		this.isbn = isbn;
-		this.name = name;
-		this.author = author;
-		this.price = price;
-		this.inStock = inStock;
-		this.soldQuantity = soldQuantity;
 	}
 
 	// Update Show(合併顯示) i書作分價庫

@@ -26,14 +26,14 @@ public class BookSellingController {
 		return bookService.SearchBookByCategory(request.getStr());
 	}
 	
-//	@PostMapping(value = "search_containing") //JPQL
-//	public BookSellingResponse SearchBookContaining(@RequestBody BookSellingRequest request) {
-//		return bookService.SearchBookContaining(request.getIsCustomer(),request.getStr());
-//	}
-	@PostMapping(value = "search_containing") //JPA
+	@PostMapping(value = "search_containing") //JPQL
 	public BookSellingResponse SearchBookContaining(@RequestBody BookSellingRequest request) {
-		return bookService.SearchBookContaining(request.getIsCustomer(),request.getSearchIsbn(),request.getSearchName(),request.getSearchAuthor());
+		return bookService.SearchBookContaining(request.getIsCustomer(),request.getStr());
 	}
+//	@PostMapping(value = "search_containing") //JPA
+//	public BookSellingResponse SearchBookContaining(@RequestBody BookSellingRequest request) {
+//		return bookService.SearchBookContaining(request.getIsCustomer(),request.getSearchIsbn(),request.getSearchName(),request.getSearchAuthor());
+//	}
 	
 	@PostMapping(value = "update_book")
 	public BookSellingResponse UpdateBook(@RequestBody BookSellingRequest request) {

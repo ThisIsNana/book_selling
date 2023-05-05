@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,38 +17,37 @@ import com.example.book_selling.repository.BookSellingDAO;
 import com.example.book_selling.service.ifs.BookSellingService;
 import com.example.book_selling.vo.BookSellingResponse;
 
-
 @SpringBootTest(classes = BookSellingApplication.class)
 class BookSellingApplicationTests {
 
 	@Autowired
 	private BookSellingService bookService;
-	
+
 	@Autowired
 	private BookSellingDAO bookDAO;
-	
+
 	@Test
 	public void addBookTest() {
 		List<BookSelling> bookList = new ArrayList<>();
-		//正常的
+		// 正常的
 		bookList.add(null);
-		bookList.add(new BookSelling("9786263580864","約會心理學","OL大獅",200,"[中文,心靈]",80));
-		bookList.add(new BookSelling("978626358086","約會心理學","OL大獅",200,"[中文,心靈]",80));
-		bookList.add(new BookSelling("9786263580864","","OL大獅",200,"[中文,心靈]",80));
-		bookList.add(new BookSelling("9786263580864","約會心理學","",200,"[中文,心靈]",80));
-		bookList.add(new BookSelling("9786263580864","約會心理學","OL大獅",-200,"[中文,心靈]",80));
-		bookList.add(new BookSelling("9786263580864","約會心理學","OL大獅",200,"",80));
-		bookList.add(new BookSelling("9786263580864","約會心理學","OL大獅",200,"[中文,心靈]",-80));
+		bookList.add(new BookSelling("9786263580864", "約會心理學", "OL大獅", 200, "[中文,心靈]", 80));
+		bookList.add(new BookSelling("978626358086", "約會心理學", "OL大獅", 200, "[中文,心靈]", 80));
+		bookList.add(new BookSelling("9786263580864", "", "OL大獅", 200, "[中文,心靈]", 80));
+		bookList.add(new BookSelling("9786263580864", "約會心理學", "", 200, "[中文,心靈]", 80));
+		bookList.add(new BookSelling("9786263580864", "約會心理學", "OL大獅", -200, "[中文,心靈]", 80));
+		bookList.add(new BookSelling("9786263580864", "約會心理學", "OL大獅", 200, "", 80));
+		bookList.add(new BookSelling("9786263580864", "約會心理學", "OL大獅", 200, "[中文,心靈]", -80));
 		BookSellingResponse bookResponse = bookService.AddBook(bookList);
-		Assert.isTrue(bookResponse.getMessage().equalsIgnoreCase(RtnCode.DATA_ERROR.getMessage()),"出現錯誤!");
+		Assert.isTrue(bookResponse.getMessage().equalsIgnoreCase(RtnCode.DATA_ERROR.getMessage()), "出現錯誤!");
 	}
-	
+
 //	@Test
 //	public void updateBookByIsbnTest() {
 //		int result = bookDAO.updateBookByIsbn(200, "[中文, 心靈, 醫療]", 91, "9786263580857");
 //		System.out.println(result);
 //	}
-	
+
 //	@Test
 //	public void findAllByKeywordTest() {
 //		List<BookSelling> resultList = bookDAO.findAllByKeyword("哈");
@@ -55,7 +55,7 @@ class BookSellingApplicationTests {
 //			System.out.println(result);
 //		}
 //	}
-	
+
 //	@Test
 //	public void findAllByKeywordForCustomerTest() {
 //		List<Object[]> resultList = bookDAO.SearchAllByKeywordForCustomer("哈");
@@ -63,7 +63,7 @@ class BookSellingApplicationTests {
 //			System.out.println(result);
 //		}
 //	}
-	
+
 //	@Test
 //	public void SearchAllByKeywordForSupplierTest() {
 //		List<Object[]> resultList = bookDAO.SearchAllByKeywordForSupplier("哈");
@@ -71,6 +71,13 @@ class BookSellingApplicationTests {
 //			System.out.println(result);
 //		}
 //	}
+
+	@Test
+	public void UpdateBookTest(){
+		BookSellingResponse result = bookService.UpdateBook("9786263580856", 120, "英文, 兒童", 100);
+		System.out.println(result.getMessage());
+	}
+	
 	
 	@Test
 	public void OrderBookTest() {
@@ -82,10 +89,20 @@ class BookSellingApplicationTests {
 		System.out.println(orderResponse.getMessage());
 	}
 	
+	//測試一下list會不會加空白
+	@Test
+	public void test() {
+		String st = "a,b,,d,,";
+		List<Object> str = Arrays.asList(st.split(","));
+		for(Object s:str) {
+			System.out.println(s);
+		}
+	}
+	
+	
 	
 
-	
-	//===========之前的TEST範例================
+	// ===========之前的TEST範例================
 //	@Test
 //	public void depositTest() {
 //		//先創建測試資料
@@ -100,6 +117,5 @@ class BookSellingApplicationTests {
 //		bankDAO.delete(resultBank);
 //		
 //	}
-	
 
 }
