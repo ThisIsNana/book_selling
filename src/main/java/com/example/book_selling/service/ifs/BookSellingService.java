@@ -8,19 +8,22 @@ import com.example.book_selling.vo.BookSellingResponse;
 
 public interface BookSellingService {
 	//2
-	public BookSellingResponse AddBook(List<BookSelling> bookList);
+	public BookSellingResponse addBook(List<BookSelling> bookList);
 	//3
-	public BookSellingResponse SearchBookByCategory(String str);
+	public BookSellingResponse searchBookByCategory(String str);
 	//4
-	public BookSellingResponse SearchBookContaining(Boolean isCustomer, String str);
+	public BookSellingResponse searchBookContaining(Boolean isCustomer, String str);
 //	public BookSellingResponse SearchBookContaining(Boolean isCustomer, String isbn, String name, String author);
 	//5
-//	public BookSellingResponse UpdateBook(BookSelling book);
-	public BookSellingResponse UpdateBook(String isbn, int price, String category, int inStock);
-	//6
-	public BookSellingResponse OrderBook(Map<String,Integer> map);
+	public BookSellingResponse updateBook(Map<String, Integer> stockUpdate);
+	public BookSellingResponse updateBook(String isbn, int price);
+	public BookSellingResponse updateBook(String isbn, String category);
+//	public BookSellingResponse updateBook(BookSelling book););
 	
-	public BookSellingResponse SaleRank();
+	//6
+	public BookSellingResponse orderBook(Map<String,Integer> map);
+	
+	public BookSellingResponse saleRank();
 
 	
 }

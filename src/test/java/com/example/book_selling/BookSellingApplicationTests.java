@@ -1,15 +1,19 @@
 package com.example.book_selling;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.assertj.core.util.Arrays;
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import com.example.book_selling.constants.RtnCode;
 import com.example.book_selling.entity.BookSelling;
@@ -38,7 +42,7 @@ class BookSellingApplicationTests {
 		bookList.add(new BookSelling("9786263580864", "約會心理學", "OL大獅", -200, "[中文,心靈]", 80));
 		bookList.add(new BookSelling("9786263580864", "約會心理學", "OL大獅", 200, "", 80));
 		bookList.add(new BookSelling("9786263580864", "約會心理學", "OL大獅", 200, "[中文,心靈]", -80));
-		BookSellingResponse bookResponse = bookService.AddBook(bookList);
+		BookSellingResponse bookResponse = bookService.addBook(bookList);
 		Assert.isTrue(bookResponse.getMessage().equalsIgnoreCase(RtnCode.DATA_ERROR.getMessage()), "出現錯誤!");
 	}
 
@@ -72,11 +76,11 @@ class BookSellingApplicationTests {
 //		}
 //	}
 
-	@Test
-	public void UpdateBookTest(){
-		BookSellingResponse result = bookService.UpdateBook("9786263580856", 120, "英文, 兒童", 100);
-		System.out.println(result.getMessage());
-	}
+//	@Test
+//	public void UpdateBookTest(){
+//		BookSellingResponse result = bookService.updateBook("9786263580856", 120, "英文, 兒童", 100);
+//		System.out.println(result.getMessage());
+//	}
 	
 	
 	@Test
@@ -85,7 +89,7 @@ class BookSellingApplicationTests {
 		orderMap.put("9786263580855", 1);
 		orderMap.put("9786263580856", 1);
 		orderMap.put("9786263580857", 3);
-		BookSellingResponse orderResponse = bookService.OrderBook(orderMap);
+		BookSellingResponse orderResponse = bookService.orderBook(orderMap);
 		System.out.println(orderResponse.getMessage());
 	}
 	
@@ -99,7 +103,31 @@ class BookSellingApplicationTests {
 		}
 	}
 	
+	@Test
+	public void setTest() {
+		String category = "AA"; 
+		Set<String> cate = new HashSet<>();
+		List<String> newL = new ArrayList<>();
+		cate.addAll(Arrays.asList(category.replace(" ","").split(",")));
+		for(String c : cate) {
+			if(!StringUtils.hasText(c)) {
+				continue;
+			}
+			newL.add(c);
+		}
+		String newStr = String.join(",", newL);
+		System.out.println(newStr);
+	}
 	
+//	@Test
+//	public void listCompareTest() {
+//		List<String> a = new ArrayList<>(Arrays.asList("A","B","C"));
+//		List<String> b = new ArrayList<>(Arrays.asList("A","C","B"));
+//		boolean result = CollectionUtils.isEqualCollection(a, b);
+//		if (result == true) {
+//			System.out.println("truuue");
+//		}
+//	}
 	
 
 	// ===========之前的TEST範例================
@@ -117,5 +145,15 @@ class BookSellingApplicationTests {
 //		bankDAO.delete(resultBank);
 //		
 //	}
+	
+	@Test
+	public void strJoinTest() {
+		List<String> list = Arrays.asList("A", "B", "C");
+		System.out.println(list.toString());
+		String str = String.join(",", list);
+		System.out.println(str);
+		System.out.println(str.contains("B"));
+		System.out.println(str.contains("b"));
+	}
 
 }

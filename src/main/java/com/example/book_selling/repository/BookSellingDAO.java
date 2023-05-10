@@ -33,7 +33,5 @@ public interface BookSellingDAO extends JpaRepository<BookSelling, String> {
 	
 	//6--銷量排行-
 	public List<BookSelling> findTop5ByOrderBySoldQuantityDesc();
-
-
 	
 }

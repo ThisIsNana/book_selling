@@ -18,36 +18,36 @@ public class BookSellingController {
 	
 	@PostMapping(value = "add_book")
 	public BookSellingResponse AddBook(@RequestBody BookSellingRequest request) {
-		return bookService.AddBook(request.getBookList());
+		return bookService.addBook(request.getBookList());
 	}
 	 
 	@PostMapping(value = "search_by_category")
 	public BookSellingResponse SearchBookByCategory(@RequestBody BookSellingRequest request) {
-		return bookService.SearchBookByCategory(request.getStr());
+		return bookService.searchBookByCategory(request.getStr());
 	}
 	
 	@PostMapping(value = "search_containing") //JPQL
 	public BookSellingResponse SearchBookContaining(@RequestBody BookSellingRequest request) {
-		return bookService.SearchBookContaining(request.getIsCustomer(),request.getStr());
+		return bookService.searchBookContaining(request.getIsCustomer(),request.getStr());
 	}
 //	@PostMapping(value = "search_containing") //JPA
 //	public BookSellingResponse SearchBookContaining(@RequestBody BookSellingRequest request) {
 //		return bookService.SearchBookContaining(request.getIsCustomer(),request.getSearchIsbn(),request.getSearchName(),request.getSearchAuthor());
 //	}
 	
-	@PostMapping(value = "update_book")
-	public BookSellingResponse UpdateBook(@RequestBody BookSellingRequest request) {
-		return bookService.UpdateBook(request.getSearchIsbn(),request.getUpdatePrice(),request.getUpdateCategory(),request.getUpdateInStock());
-	}
+//	@PostMapping(value = "update_book")
+//	public BookSellingResponse UpdateBook(@RequestBody BookSellingRequest request) {
+//		return bookService.updateBook(request.getSearchIsbn(),request.getUpdatePrice(),request.getUpdateCategory(),request.getUpdateInStock());
+//	}
 	
 	@PostMapping(value = "order")
 	public BookSellingResponse OrderBook(@RequestBody BookSellingRequest request) {
-		return bookService.OrderBook(request.getOrderMap());
+		return bookService.orderBook(request.getOrderMap());
 	}
 	
 	@GetMapping(value = "show_rank")
 	public BookSellingResponse SaleRank() {
-		return bookService.SaleRank();
+		return bookService.saleRank();
 	}
 
 }

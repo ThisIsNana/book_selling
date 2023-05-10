@@ -10,7 +10,7 @@ public enum RtnCode {
 	INT_ERROR("400", "輸入數字或數量有誤!"), 
 	NOT_IN_STOCK("400", "庫存不足，請確認訂單!"), 
 	UNAUTHORIZED("401", "尚未輸入身分!"), 
-	NOT_FOUND("404", "查無資料"), 
+	NOT_FOUND("404", "無相符資料"), 
 	ALREADY_PRESENT("409", "重複新增"),
 	NO_CHANGE("409", "資料未修改");
 
